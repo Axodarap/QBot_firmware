@@ -3,20 +3,21 @@
 class Stepper
 {
 public:
-	Stepper(int step_pin, int dir_pin, int num_steps, int speed);
+	Stepper(int step_pin, int dir_pin, int num_steps, int speed); //num_steps --> #steps/360°
+	bool update();
 
 protected:
-	void rotate(int angle, bool dir);
+	void set_angle(int angle, bool dir);
 	void set_speed(int speed);
 
 private:
 	int step_pin_;
 	int dir_pin_;
 	int speed_;					//steps/s
-	int num_steps_;				//steps/rotation
+	int steps_per_rotation_;		
 	int steps_to_go_;			//remaining # of steps
-	unsigned long last_call_;	//storing the system time of the last function call
+	unsigned long next_call_;	//storing the system time when the stepper should move again
 
-	int angle_2_steps(int angle);
+	int angle_to_steps(int angle);
 
 };

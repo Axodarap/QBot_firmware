@@ -24,9 +24,21 @@
     <ClInclude Include="Stepper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Gripper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Slider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Stepper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Gripper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Slider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
