@@ -15,12 +15,9 @@ public:
 	bool read_command();
 	bool execute_comand();
 	int char_to_int(char x);
-	bool turn_R(dir dir, int turns);
-	bool turn_L(dir dir, int turns);
-	bool turn_F(dir dir, int turns);
-	bool turn_B(dir dir, int turns);
-	bool turn_U(dir dir, int turns);
-	bool turn_D(dir dir, int turns);
+
+	bool turn_side(Gripper &gripper, dir dir, int turns);
+	bool slide(Slider &slider, dir dir);		//mode being eithe ropen or close
 
 	Slider slider_Y_;
 	Slider slider_X_;

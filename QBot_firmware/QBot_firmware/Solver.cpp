@@ -8,14 +8,15 @@ gripper_L_(gripperL_step, gripperL_dir, gripperL_en, steps_per_rot, gripper_spee
 gripper_R_(gripperR_step, gripperR_dir, gripperR_en, steps_per_rot, gripper_speed),
 gripper_F_(gripperF_step, gripperF_dir, gripperF_en, steps_per_rot, gripper_speed),
 gripper_B_(gripperB_step, gripperB_dir, gripperB_en, steps_per_rot, gripper_speed),
-command_{0},
-turns_{0}
+command_{'F'}, //TODO reset to 0
+turns_{4}	//TODO reset to 0, was just set to 4 for testing
 {
 	Serial.begin(baudrate);
 }
 
 bool Solver::read_command()		//empties the serial buffer and stores the command in its approproiate variables, returns true once finished
 {
+	bool command_received = false;
 	
 	while(Serial.available())
 	{
@@ -28,8 +29,9 @@ bool Solver::read_command()		//empties the serial buffer and stores the command 
 		else
 			command_ = incoming_byte;
 
+		command_received = true;
 	}
-	return true;
+	return command_received;
 }
 
 bool Solver::execute_comand()
@@ -37,73 +39,73 @@ bool Solver::execute_comand()
 	switch(command_)
 	{
 	case 'R':
-		if(turn_R(dir::cw, turns_))
+		if(turn_side(gripper_R_,dir::cw,turns_))
 			return(true);
 		else
 			return(false);
 
 	case 'r':
-		if(turn_R(dir::ccw, turns_))
+		if(turn_side(gripper_R_,dir::ccw,turns_))
 				return(true);
 		else
 			return(false);
 
 	case 'L':
-		if(turn_L(dir::cw, turns_))
+		if(turn_side(gripper_L_,dir::cw,turns_))
 			return(true);
 		else
 			return(false);
 	
 	case 'l':
-		if(turn_L(dir::ccw, turns_))
+		if(turn_side(gripper_L_,dir::ccw,turns_))
 			return(true);
 		else
 			return(false);
 
 	case 'F':
-		if(turn_F(dir::cw, turns_))
+		if(turn_side(gripper_F_,dir::cw,turns_))
 			return(true);
 		else
 			return(false);
 
 	case 'f':
-		if(turn_F(dir::ccw, turns_))
+		if(turn_side(gripper_F_,dir::ccw,turns_))
 			return(true);
 		else
 			return(false);
 
 	case 'B':
-		if(turn_B(dir::cw, turns_))
+		if(turn_side(gripper_B_,dir::cw,turns_))
 			return(true);
 		else
 			return(false);
 	
 	case 'b':
-		if(turn_B(dir::ccw, turns_))
+		if(turn_side(gripper_B_,dir::ccw,turns_))
 			return(true);
 		else
 			return(false);
 		
 	case 'U':
-		if(turn_U(dir::cw, turns_))
+		if(1)	//TODO implement
 			return(true);
 		else
 			return(false);
 		
-	case 'u':
-		if(turn_U(dir::ccw, turns_))
+	case 'u':	//TODO implement
+		if(1)
 			return(true);
 		else
 			return(false);
 		
-	case 'D':
-		if(turn_D(dir::cw, turns_))
+	case 'D':	//TODO implement
+		if(1)
 			return(true);
 		else
 			return(false);
 		
-	case 'd':
-		if(turn_D(dir::ccw, turns_))
+	case 'd':	//TODO implement
+		if(1)
 			return(true);
 		else
 			return(false);
@@ -119,24 +121,55 @@ int Solver::char_to_int(char x)
 	return static_cast<int>(x) - 48;
 }
 
-bool Solver::turn_R(dir dir, int turns)
+//--------------------------------------- actual moving functions -----------------------------------------------------------------------
+
+bool Solver::turn_side(Gripper & gripper, dir dir, int turns)
 {
 	static bool busy = false;
 
-	if(!busy)	//if this i the first call of the function
+	if(!busy)	//if this is the first call of the function
 	{
-		gripper_R_.set_turns(turns, dir);
+		gripper.set_turns(turns, dir);
 		busy = true;
 		return false;
 	}
 	else
 	{
-		if(gripper_R_.update())
+		if(gripper.update())
 		{
 			busy = false;
 			return true;	//done moving
 		}
 		else
+		{
 			return false;	//still moving
+		}
+			
 	}
 }
+
+bool Solver::slide(Slider & slider, dir dir)
+{
+	static bool busy = false;
+
+	if(!busy)	//if this is the first call of the function
+	{
+		slider.set_direction(dir);
+		busy = true;
+		return false;
+	}
+	else
+	{
+		if(slider.update())
+		{
+			busy = false;
+			return true;	//done moving
+		}
+		else
+		{
+			return false;	//still moving
+		}
+	}
+}
+
+
