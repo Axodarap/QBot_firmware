@@ -7,7 +7,7 @@ class Slider:public Stepper
 {
 public:
 	Slider(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, int speed, int max_angle);
-	void set_direction(bool dir);
+	void set_direction(dir dir);
 
 private:
 	int max_angle_;	//defines the angle to move grippers away from cube

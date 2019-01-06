@@ -16,9 +16,9 @@ Gripper gripper1(gripperL_step, gripperL_dir, gripperL_en, steps_per_rot, grippe
 
 void setup() 
 {
-	delay(5000);
+	Serial.begin(115200);
 	gripper1.enable();
-	gripper1.set_turns(4,true);
+	gripper1.set_turns(4, dir::cw);
 }
 
 
@@ -26,7 +26,7 @@ void loop()
 {
 	if(gripper1.update())
 	{
-		gripper1.set_turns(4,true);
+		gripper1.set_turns(4,dir::cw);
 		delay(1000);
 	}	
 }

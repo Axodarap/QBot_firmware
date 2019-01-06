@@ -3,6 +3,7 @@
 #include "Slider.h"
 #include "Gripper.h"
 #include "enum.h"
+#include "hardware_parameters.h"
 
 class Solver
 {
@@ -10,7 +11,7 @@ class Solver
 public:
 	Solver();
 
-private:
+//private:
 	bool read_command();
 	bool execute_comand();
 	int char_to_int(char x);

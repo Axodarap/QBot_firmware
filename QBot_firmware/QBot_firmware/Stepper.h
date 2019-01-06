@@ -1,4 +1,5 @@
 #pragma once
+#include "enum.h"
 
 class Stepper
 {
@@ -8,7 +9,7 @@ public:
 	void enable();
 
 protected:
-	void set_angle(int angle, bool dir);
+	void set_angle(int angle, dir dir);
 	void set_speed(int speed);
 	
 private:

@@ -36,6 +36,7 @@ bool Stepper::update()
 	
 			if(!digitalRead(step_pin_))
 			{
+				Serial.println("step");
 				steps_to_go_--;	//to avoid reducing the counter twice each step
 			}
 				
@@ -44,9 +45,9 @@ bool Stepper::update()
 	}
 }
 
-void Stepper::set_angle(int angle, bool dir)
+void Stepper::set_angle(int angle, dir dir)
 {
-	digitalWrite(dir_pin_, dir);			//setting direction
+	digitalWrite(dir_pin_, int(dir));		//setting direction
 	steps_to_go_ = angle_to_steps(angle);	//calculating requiered #of steps to reach desired angle
 }
 

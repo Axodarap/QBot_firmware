@@ -3,9 +3,10 @@
 #include "Arduino.h"
 #include "Stepper.h"
 
+
 class Gripper: public Stepper
 {
 public:
 	Gripper(int step_pin, int dir_pin,int en_pin, int steps_per_rotation, int speed);
-	void set_turns(int quarter_turns, bool dir);
+	void set_turns(int quarter_turns, dir dir);
 };

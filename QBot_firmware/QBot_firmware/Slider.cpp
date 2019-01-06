@@ -6,7 +6,7 @@ Slider::Slider(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, in
 {
 }
 
-void Slider::set_direction(bool dir)
+void Slider::set_direction(dir dir)
 {
 	set_angle(max_angle_, dir);
 }

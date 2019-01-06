@@ -1,5 +1,5 @@
 #include "Solver.h"
-#include "enum.h"
+
 
 Solver::Solver():
 slider_Y_(sliderY_step, sliderY_dir, sliderY_en, steps_per_rot, slider_speed, max_angle),
@@ -117,4 +117,24 @@ bool Solver::execute_comand()
 int Solver::char_to_int(char x)
 {
 	return static_cast<int>(x) - 48;
+}
+
+bool Solver::turn_R(dir dir, int turns)
+{
+	static bool busy = false;
+
+	if(!busy)	//if this i the first call of the function
+	{
+		gripper_R_.set_turns(turns, dir);
+		return false;
+	}
+	else
+	{
+		if(gripper_R_.update())
+		{
+			return true;	//done moving
+		}
+		else
+			return false;	//still moving
+	}
 }

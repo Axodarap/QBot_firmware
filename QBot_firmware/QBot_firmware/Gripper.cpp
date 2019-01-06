@@ -4,7 +4,7 @@ Gripper::Gripper(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, 
 {
 }
 
-void Gripper::set_turns(int quarter_turns, bool dir)
+void Gripper::set_turns(int quarter_turns, dir dir)
 {
 	set_angle(90*quarter_turns, dir);
 }

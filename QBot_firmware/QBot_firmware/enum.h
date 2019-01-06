@@ -1,3 +1,3 @@
 #pragma once
 
-enum class dir{cw = 1, ccw = 0};
+enum class dir:bool{cw = true, ccw = false};
