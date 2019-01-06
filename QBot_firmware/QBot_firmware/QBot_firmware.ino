@@ -7,12 +7,10 @@
 #include "Slider.h"
 #include "Gripper.h"
 #include "Stepper.h"
-#include "Solver.h"
 #include "hardware_parameters.h"
 
 
 
-Solver qbot;
 
 
 void setup() 
@@ -24,5 +22,5 @@ void setup()
 
 void loop() 
 {
-	qbot.turn_R(dir::cw,2);
+
 }

@@ -118,7 +118,6 @@
   <ItemGroup>
     <ClInclude Include="enum.h" />
     <ClInclude Include="hardware_parameters.h" />
-    <ClInclude Include="Solver.h" />
     <ClInclude Include="Gripper.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="Stepper.h" />
@@ -127,7 +126,6 @@
   <ItemGroup>
     <ClCompile Include="Gripper.cpp" />
     <ClCompile Include="Slider.cpp" />
-    <ClCompile Include="Solver.cpp" />
     <ClCompile Include="Stepper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
