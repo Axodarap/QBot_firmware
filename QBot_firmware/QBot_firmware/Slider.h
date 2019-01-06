@@ -6,7 +6,7 @@
 class Slider:public Stepper
 {
 public:
-	Slider(int step_pin, int dir_pin, int num_steps, int speed, int max_angle);
+	Slider(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, int speed, int max_angle);
 	void set_direction(bool dir);
 
 private:

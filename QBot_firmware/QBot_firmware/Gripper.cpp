@@ -1,6 +1,6 @@
 #include "Gripper.h"
 
-Gripper::Gripper(int step_pin, int dir_pin, int num_steps, int speed) : Stepper(step_pin, dir_pin, num_steps, speed)
+Gripper::Gripper(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, int speed) : Stepper(step_pin, dir_pin, en_pin, steps_per_rotation, speed)
 {
 }
 
