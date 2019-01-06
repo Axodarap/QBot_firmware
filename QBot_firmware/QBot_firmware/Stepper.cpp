@@ -22,7 +22,7 @@ Stepper::Stepper(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, 
 bool Stepper::update()
 {
 	int delay = 1000/speed_; ///2; //delay in ms in order to achieve pwm with 50% duty cycle and the desired steps/s
-		
+	
 	if(!steps_to_go_) 
 	{
 		return true; //done moving

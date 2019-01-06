@@ -126,12 +126,14 @@ bool Solver::turn_R(dir dir, int turns)
 	if(!busy)	//if this i the first call of the function
 	{
 		gripper_R_.set_turns(turns, dir);
+		busy = true;
 		return false;
 	}
 	else
 	{
 		if(gripper_R_.update())
 		{
+			busy = false;
 			return true;	//done moving
 		}
 		else
