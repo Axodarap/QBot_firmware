@@ -31,6 +31,7 @@ bool Stepper::update()
 	{
 		if(millis() >= next_call_)
 		{
+			//Serial.println(steps_to_go_); 
 			digitalWrite(step_pin_, !digitalRead(step_pin_));
 			next_call_ = millis() + delay;
 	

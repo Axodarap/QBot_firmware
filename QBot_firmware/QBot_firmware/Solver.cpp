@@ -8,8 +8,8 @@ gripper_L_(gripperL_step, gripperL_dir, gripperL_en, steps_per_rot, gripper_spee
 gripper_R_(gripperR_step, gripperR_dir, gripperR_en, steps_per_rot, gripper_speed),
 gripper_F_(gripperF_step, gripperF_dir, gripperF_en, steps_per_rot, gripper_speed),
 gripper_B_(gripperB_step, gripperB_dir, gripperB_en, steps_per_rot, gripper_speed),
-command_{'F'}, //TODO reset to 0
-turns_{4}	//TODO reset to 0, was just set to 4 for testing
+command_{'0'}, 
+turns_{0}
 {
 	Serial.begin(baudrate);
 }
@@ -30,6 +30,8 @@ bool Solver::read_command()		//empties the serial buffer and stores the command 
 			command_ = incoming_byte;
 
 		command_received = true;
+
+		delay(2);	//TODO find out why this delay is neede, if its not there the buffer remains full
 	}
 	return command_received;
 }

@@ -27,13 +27,17 @@ void setup()
 void loop() 
 {
 
-//TODO establish communication -> read command, make sure you dont miss anything, send ACK
-//TODO also make sure that the actual moving is done in a seperate loop, no time spent listening for commands while moving!
+	while(!qbot.read_command());	//waiting for command to be received
 
-	/*
-	 * if(qbot.slide(qbot.slider_X_,dir::close))
-	 *	 while(1);
-	 */
+	while(! qbot.execute_comand());	//executing command 
 
+
+
+//TODO send ACK
+//TODO figure out the delay problem
+//TODO when starting for the first time the motor draws 1 amp and the supply breaks down, after being turned once this goes down to normal 
+	//kinda solved --> if arduino is plugged in after applying power everything is fine --> usb plug cut power rail KEEP GND
+	
+//TODO maybe implement a "disable_stepper" before red and a "enable steppers" afer the read
 
 }
