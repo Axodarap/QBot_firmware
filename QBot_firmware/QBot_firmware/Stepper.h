@@ -6,12 +6,13 @@ class Stepper
 public:
 	Stepper(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, int speed); 
 	bool update();
-	void enable();
+	void enable(bool en);
+	
 
 protected:
 	void set_angle(int angle, dir dir);
 	void set_speed(int speed);
-	
+		
 private:
 	int step_pin_;
 	int dir_pin_;

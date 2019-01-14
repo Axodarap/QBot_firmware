@@ -1,41 +1,41 @@
 #pragma once
 //------------------ general ------------------
 static constexpr int steps_per_rot = 200;
-static constexpr int gripper_speed = 200;
-static constexpr int slider_speed = 250;
+static constexpr int gripper_speed = 150;
+static constexpr int slider_speed = 125;
 static constexpr int max_angle = 418;
 
-static constexpr int baudrate = 115200;
+static constexpr long baudrate = 115200;
 
-//----------------- gripper F -----------------
-static constexpr int gripperF_step = 10;
-static constexpr int gripperF_dir = 11;
-static constexpr int gripperF_en = 22;
+//----------------- gripper F ----------------- MOT4
+static constexpr int gripperF_step = 8;
+static constexpr int gripperF_dir = 9;
+static constexpr int gripperF_en = 39;
 
-//----------------- gripper B -----------------
-static constexpr int gripperB_step = 0;
-static constexpr int gripperB_dir = 0;
-static constexpr int gripperB_en = 0;
+//----------------- gripper B ----------------- MOT1
+static constexpr int gripperB_step = 2;
+static constexpr int gripperB_dir = 3;
+static constexpr int gripperB_en = 33;
 
-//----------------- gripper L -----------------
-static constexpr int gripperL_step = 0;
-static constexpr int gripperL_dir = 0;
-static constexpr int gripperL_en = 0;
+//----------------- gripper L ----------------- MOT6
+static constexpr int gripperL_step = 12;
+static constexpr int gripperL_dir = 13;
+static constexpr int gripperL_en = 37;
 
-//----------------- gripper R -----------------
-static constexpr int gripperR_step = 12;
-static constexpr int gripperR_dir = 13;
-static constexpr int gripperR_en = 9;
+//----------------- gripper R ----------------- MOT3
+static constexpr int gripperR_step = 6;
+static constexpr int gripperR_dir = 7;
+static constexpr int gripperR_en = 35;
 
-//----------------- slider y -----------------
-static constexpr int sliderY_step = 0;
-static constexpr int sliderY_dir = 0;
-static constexpr int sliderY_en = 0;
+//----------------- slider y ----------------- MOT5
+static constexpr int sliderY_step = 10;
+static constexpr int sliderY_dir = 11;
+static constexpr int sliderY_en = 31;
 
-//----------------- slider x -----------------
-static constexpr int sliderX_step = 10;
-static constexpr int sliderX_dir = 11;
-static constexpr int sliderX_en = 0;
+//----------------- slider x ----------------- MOT2
+static constexpr int sliderX_step = 4;
+static constexpr int sliderX_dir = 5;
+static constexpr int sliderX_en = 39;
 
 
 
