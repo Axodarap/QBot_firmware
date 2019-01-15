@@ -2,7 +2,7 @@
 //------------------ general ------------------
 static constexpr int steps_per_rot = 200;
 static constexpr int gripper_speed = 150;
-static constexpr int slider_speed = 125;
+static constexpr int slider_speed = 150;
 static constexpr int max_angle = 418;
 
 static constexpr long baudrate = 115200;

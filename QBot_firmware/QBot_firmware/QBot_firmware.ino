@@ -18,32 +18,21 @@ Solver qbot;
 void setup() 
 {
 	qbot.init(baudrate);
-	//qbot.gripper_R_.set_turns(1,dir::ccw);
-	//qbot.gripper_L_.set_turns(1,dir::ccw);
 }
 
 
 void loop() 
 {
-	//qbot.gripper_R_.update();
-	//qbot.gripper_L_.update();
-
-	qbot.turn_side(qbot.gripper_L_,dir::ccw,1);
-	qbot.turn_side(qbot.gripper_R_,dir::ccw,1);
+	//while(!Serial.available());
+	//while(qbot.turn_side(qbot.gripper_F_,dir::ccw,1) & qbot.turn_side(qbot.gripper_B_,dir::cw,1))
+	//{
+	//	Serial.println("moving");
+	//}
 		
-	
-	
-	/*
-	if(qbot.turn_side(qbot.gripper_R_,dir::cw,1) && qbot.turn_side(qbot.gripper_L_,dir::cw,1))
-		while(1)
-		{
-			Serial.println("out");
-		}
-	*/
-	
-	
-	//while(!qbot.read_command());	//waiting for command to be received
-	//while(!qbot.execute_comand());	//executing command 
+
+
+	while(!qbot.read_command());	//waiting for command to be received
+	while(!qbot.execute_comand());	//executing command 
 
 //TODO  pull up to enbale pin ? disabling not happening immideatly
 

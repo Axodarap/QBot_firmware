@@ -18,7 +18,8 @@ public:
 	bool turn_side(Gripper &gripper, dir dir, int turns);
 	bool slide(Slider &slider, dir dir);		//mode being either open or 
 	bool turn_top_bot(dir dir, int turns, cube_sides side);
-	bool flip(Gripper &gripper1, Gripper &gripper2);	//flipping the cube
+	void serialFlush();
+  
 		
 	Slider slider_Y_;
 	Slider slider_X_;

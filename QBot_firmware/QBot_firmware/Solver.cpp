@@ -123,7 +123,8 @@ bool Solver::execute_comand()
 		break;
 		
 	default:
-		executed = false;
+		Serial.write('NUL');
+		executed = true;
 	}
 
 	if(executed)	
@@ -144,7 +145,6 @@ int Solver::char_to_int(char x)
 
 bool Solver::turn_side(Gripper & gripper, dir dir, int turns)
 {
-	static bool busy = false;
 
 	if(!gripper.moving)	//if this is the first call of the function
 	{
@@ -204,8 +204,7 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
 			break;
 			
 		case state::flip1:
-		Serial.println("seocnd state");
-			if(turn_side(gripper_F_,dir::ccw,1) && turn_side(gripper_B_,dir::cw,1))
+			if(turn_side(gripper_F_,dir::ccw,1) & turn_side(gripper_B_,dir::cw,1))
 				moving_state_ = state::lock1;
 			break;
 
@@ -220,7 +219,7 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
 			break;
 
 		case state::flip2:
-			if(turn_side(gripper_F_,dir::ccw,1) && turn_side(gripper_B_,dir::cw,1))
+			if(turn_side(gripper_F_,dir::ccw,1) & turn_side(gripper_B_,dir::cw,1))
 				moving_state_ = state::lock2;
 			break;
 
@@ -243,13 +242,13 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
 			break;
 
 		case state::unlock3:
-			if(slide(slider_Y_, dir::open))
-				moving_state_ = state::flip3;
+			if(slide(slider_X_, dir::open))
+					moving_state_ = state::flip3;
 			break;
 
 		case state::flip3:
-			if(turn_side(gripper_F_,dir::cw,1) && turn_side(gripper_B_,dir::ccw,1))
-					moving_state_ = state::turn_back;
+			if(turn_side(gripper_F_,dir::cw,1) & turn_side(gripper_B_,dir::ccw,1))
+				moving_state_ = state::turn_back;
 			break;
 
 		case state::turn_back:
@@ -261,7 +260,7 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
 
 			if(side == cube_sides::U)
 			{
-			if(turn_side(gripper_L_,n_dir,turns))
+				if(turn_side(gripper_L_,n_dir,turns))
 					moving_state_ = state::lock3;
 			}
 			if(side == cube_sides::D)
@@ -282,21 +281,26 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
 			break;
 
 		case state::flip4:
-			if(turn_side(gripper_F_,dir::cw,1) && turn_side(gripper_B_,dir::ccw,1))
+			if(turn_side(gripper_F_,dir::cw,1) & turn_side(gripper_B_,dir::ccw,1))
 				moving_state_ = state::lock4;
 			break;
 
 		case state::lock4:
 			if(slide(slider_Y_, dir::close))
+			{
 				moving_state_ = state::unlock1;
-			return true;	//done moving
+				return true;	//done moving
+			}
+			break;
+
 	}
 	return false;
 }
 
-bool Solver::flip(Gripper & gripper1, Gripper & gripper2)
-{
-	return false;
-}
-
+void Solver::serialFlush()
+	{
+  while(Serial.available() > 0) {
+    char t = Serial.read();
+  }
+} 
 
