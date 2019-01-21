@@ -65,6 +65,16 @@ void Stepper::enable(bool en)
 	digitalWrite(en_pin_,!en);
 }
 
+void Stepper::adjust(dir dir)
+{
+	digitalWrite(dir_pin_, (int)dir);
+
+	digitalWrite(step_pin_, HIGH);
+	delay(20);
+	digitalWrite(step_pin_,LOW);
+	delay(20);
+}
+
 int Stepper::angle_to_steps(int angle)
 {
 	return angle * ((float)steps_per_rotation_/360);		//returns # of steps //TODO C++ style cast

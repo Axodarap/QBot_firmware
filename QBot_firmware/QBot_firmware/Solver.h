@@ -13,12 +13,15 @@ public:
 	bool read_command();
 	bool execute_comand();
 	int char_to_int(char x);
+	void enable_steppers();
+	void disable_steppers();
 
-//private:
+private:
 	bool turn_side(Gripper &gripper, dir dir, int turns);
-	bool slide(Slider &slider, dir dir);		//mode being either open or 
+	bool slide(Slider &slider, dir dir);
 	bool turn_top_bot(dir dir, int turns, cube_sides side);
-	void serialFlush();
+	void adjust_cmd(dir dir);
+
   
 		
 	Slider slider_Y_;
@@ -29,7 +32,7 @@ public:
 	Gripper gripper_B_;
 
 	state moving_state_; 
-	int turns_;		//turning commands are in the fromat |side| + |#quarter turns|, the #of quarter turns is stored in this int
+	int indicator_;		//turning commands are in the fromat |side| + |#quarter turns|, the #of quarter turns is stored in this int
 	char command_;	//the side to be turned is stored in this char, the direction is given by the command being capitalised or not
 					//  R --> R
 					//  r --> R'

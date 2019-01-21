@@ -34,7 +34,6 @@ void loop()
 	while(!qbot.read_command());	//waiting for command to be received
 	while(!qbot.execute_comand());	//executing command 
 
-//TODO  pull up to enbale pin ? disabling not happening immideatly
 
 //TODO figure out the delay problem
 //TODO when starting for the first time the motor draws 1 amp and the supply breaks down, after being turned once this goes down to normal 

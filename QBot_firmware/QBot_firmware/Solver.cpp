@@ -9,7 +9,7 @@ gripper_R_(gripperR_step, gripperR_dir, gripperR_en, steps_per_rot, gripper_spee
 gripper_F_(gripperF_step, gripperF_dir, gripperF_en, steps_per_rot, gripper_speed),
 gripper_B_(gripperB_step, gripperB_dir, gripperB_en, steps_per_rot, gripper_speed),
 command_{'0'}, 
-turns_{0},
+indicator_{0},
 moving_state_{state::unlock1}
 {
 
@@ -18,16 +18,7 @@ moving_state_{state::unlock1}
 void Solver::init(long baud)
 {
 	Serial.begin(baud);
-
-	//enabling steppers
-	gripper_L_.enable(true);
-	slider_Y_.enable(true);
-	gripper_R_.enable(true);
-	gripper_F_.enable(true);
-	gripper_B_.enable(true);
-	slider_X_.enable(true);
-	 
-	
+	enable_steppers();
 }
 
 bool Solver::read_command()		//empties the serial buffer and stores the command in its approproiate variables, returns true once finished
@@ -40,14 +31,14 @@ bool Solver::read_command()		//empties the serial buffer and stores the command 
 
 		if((48 <= static_cast<int>(incoming_byte)) && (static_cast<int>(incoming_byte) <= 57))  //if incoming byte is a digit
 		{
-			turns_ = char_to_int(incoming_byte);
+			indicator_ = char_to_int(incoming_byte);
 		}
 		else
 			command_ = incoming_byte;
 
 		command_received = true;
 
-		delay(2);	//TODO find out why this delay is neede, if its not there the buffer remains full
+		delay(2);	//TODO find out why this delay is needed, if it's not there the buffer remains full
 	}
 	return command_received;
 }
@@ -59,51 +50,51 @@ bool Solver::execute_comand()
 	switch(command_)
 	{
 	case 'R':
-		executed = turn_side(gripper_R_,dir::cw,turns_);
+		executed = turn_side(gripper_R_,dir::cw,indicator_);
 		break;
 
 	case 'r':
-		executed = turn_side(gripper_R_,dir::ccw,turns_);
+		executed = turn_side(gripper_R_,dir::ccw,indicator_);
 		break;
 
 	case 'L':
-		executed = turn_side(gripper_L_,dir::cw,turns_);
+		executed = turn_side(gripper_L_,dir::cw,indicator_);
 		break;
 	
 	case 'l':
-		executed = turn_side(gripper_L_,dir::ccw,turns_);
+		executed = turn_side(gripper_L_,dir::ccw,indicator_);
 		break;
 
 	case 'F':
-		executed = turn_side(gripper_F_,dir::cw,turns_);
+		executed = turn_side(gripper_F_,dir::cw,indicator_);
 		break;
 
 	case 'f':
-		executed = turn_side(gripper_F_,dir::ccw,turns_);
+		executed = turn_side(gripper_F_,dir::ccw,indicator_);
 		break;
 
 	case 'B':
-		executed = turn_side(gripper_B_,dir::cw,turns_);
+		executed = turn_side(gripper_B_,dir::cw,indicator_);
 		break;
 	
 	case 'b':
-		executed = turn_side(gripper_B_,dir::ccw,turns_);
+		executed = turn_side(gripper_B_,dir::ccw,indicator_);
 		break;
 		
 	case 'U':
-		executed = turn_top_bot(dir::cw, turns_, cube_sides::U);
+		executed = turn_top_bot(dir::cw, indicator_, cube_sides::U);
 		break;
 		
 	case 'u':
-		executed = turn_top_bot(dir::ccw, turns_, cube_sides::U);
+		executed = turn_top_bot(dir::ccw, indicator_, cube_sides::U);
 		break;
 		
 	case 'D':
-		executed = turn_top_bot(dir::cw, turns_, cube_sides::D);
+		executed = turn_top_bot(dir::cw, indicator_, cube_sides::D);
 		break;
 		
 	case 'd':
-		executed = turn_top_bot(dir::ccw, turns_, cube_sides::D);
+		executed = turn_top_bot(dir::ccw, indicator_, cube_sides::D);
 		break;
 
 	case 'X':
@@ -121,6 +112,16 @@ bool Solver::execute_comand()
 	case 'y':
 		executed = slide(slider_Y_, dir::close);
 		break;
+
+	case 'A':
+		adjust_cmd(dir::cw);
+		executed = true;
+		break;
+
+	case 'a':
+		adjust_cmd(dir::ccw);
+		executed = true;
+		break;
 		
 	default:
 		Serial.write('NUL');
@@ -136,9 +137,31 @@ bool Solver::execute_comand()
 	
 }
 
+
+
 int Solver::char_to_int(char x)
 {
 	return static_cast<int>(x) - 48;
+}
+
+void Solver::enable_steppers()
+{
+	gripper_L_.enable(true);
+	slider_Y_.enable(true);
+	gripper_R_.enable(true);
+	gripper_F_.enable(true);
+	gripper_B_.enable(true);
+	slider_X_.enable(true);
+}
+
+void Solver::disable_steppers()
+{
+	gripper_L_.enable(false);
+	slider_Y_.enable(false);
+	gripper_R_.enable(false);
+	gripper_F_.enable(false);
+	gripper_B_.enable(false);
+	slider_X_.enable(false);
 }
 
 //--------------------------------------- actual moving functions -----------------------------------------------------------------------
@@ -297,10 +320,39 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
 	return false;
 }
 
-void Solver::serialFlush()
+void Solver::adjust_cmd(dir dir)
+{
+	switch(indicator_)
 	{
-  while(Serial.available() > 0) {
-    char t = Serial.read();
-  }
-} 
+		case 1:
+			slider_X_.adjust(dir);
+			break;
+
+		case 2:
+			slider_Y_.adjust(dir);
+			break;
+
+		case 3:
+			gripper_L_.adjust(dir);
+			break;
+
+		case 4:
+			gripper_R_.adjust(dir);
+			break;
+
+		case 5:
+			gripper_F_.adjust(dir);
+			break;
+
+		case 6:
+			gripper_B_.adjust(dir);
+			break;
+
+
+
+
+	}
+}
+
+
 
