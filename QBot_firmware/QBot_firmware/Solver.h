@@ -20,7 +20,7 @@ private:
 	bool turn_side(Gripper &gripper, dir dir, int turns);
 	bool slide(Slider &slider, dir dir);
 	bool turn_top_bot(dir dir, int turns, cube_sides side);
-	void adjust_cmd(dir dir);
+	bool adjust_cmd(dir dir);
 
   
 		

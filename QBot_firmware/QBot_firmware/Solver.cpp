@@ -114,18 +114,26 @@ bool Solver::execute_comand()
 		break;
 
 	case 'A':
-		adjust_cmd(dir::cw);
+		if(!adjust_cmd(dir::cw))
+		{
+			Serial.write('NUL');
+			return true;
+		}
 		executed = true;
 		break;
 
 	case 'a':
-		adjust_cmd(dir::ccw);
-		executed = true;
+		if(!adjust_cmd(dir::ccw))
+		{
+			Serial.write('NUL');
+			return true;	//in order to avoid setting executed to true, but still isgnaling the end of the reading process
+		}
+		executed = true;	//correct command read
 		break;
 		
 	default:
 		Serial.write('NUL');
-		executed = true;
+		return true; //finished executing command, even ignoring a wrong command is considered executing it
 	}
 
 	if(executed)	
@@ -133,7 +141,7 @@ bool Solver::execute_comand()
 		Serial.write('ACK');	//sending ACK 
 	}
 
-	return executed;
+	return executed;	//returns true if done moving
 	
 }
 
@@ -320,37 +328,37 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
 	return false;
 }
 
-void Solver::adjust_cmd(dir dir)
+bool Solver::adjust_cmd(dir dir)
 {
 	switch(indicator_)
 	{
 		case 1:
 			slider_X_.adjust(dir);
-			break;
+			return true;
 
 		case 2:
 			slider_Y_.adjust(dir);
-			break;
+			return true;
 
 		case 3:
 			gripper_L_.adjust(dir);
-			break;
+			return true;
 
 		case 4:
 			gripper_R_.adjust(dir);
-			break;
+			return true;
 
 		case 5:
 			gripper_F_.adjust(dir);
-			break;
+			return true;
 
 		case 6:
 			gripper_B_.adjust(dir);
-			break;
+			return true;
 
-
-
-
+		default:
+		return false; //unknown command
+	break;
 	}
 }
 
