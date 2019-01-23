@@ -35,7 +35,7 @@ static constexpr int sliderY_en = 31;
 //----------------- slider x ----------------- MOT2
 static constexpr int sliderX_step = 4;
 static constexpr int sliderX_dir = 5;
-static constexpr int sliderX_en = 39;
+static constexpr int sliderX_en = 41;
 
 
 

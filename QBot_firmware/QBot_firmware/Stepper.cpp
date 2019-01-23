@@ -38,7 +38,7 @@ bool Stepper::update()
 			if(!digitalRead(step_pin_))
 			{
 				//Serial.println(steps_to_go_); 
-				steps_to_go_--;	//to avoid reducing the counter twice each step
+				steps_to_go_--;	//to avoid reducing the counter twice each step this is only executed with the high pulse
 			}
 				
 		}

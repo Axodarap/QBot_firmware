@@ -25,21 +25,24 @@ bool Solver::read_command()		//empties the serial buffer and stores the command 
 {
 	bool command_received = false;
 	
-	while(Serial.available())
+
+	if(Serial.available() >= 2)		//waiting until the buffer has reached a size of 2 bytes --> maybe implement a timeout to regularly empty the buffer
 	{
-		char incoming_byte = Serial.read();
-
-		if((48 <= static_cast<int>(incoming_byte)) && (static_cast<int>(incoming_byte) <= 57))  //if incoming byte is a digit
+		while(Serial.available())
 		{
-			indicator_ = char_to_int(incoming_byte);
+			char incoming_byte = Serial.read();
+
+			if((48 <= static_cast<int>(incoming_byte)) && (static_cast<int>(incoming_byte) <= 57))  //if incoming byte is a digit
+			{
+				indicator_ = char_to_int(incoming_byte);
+			}
+			else
+				command_ = incoming_byte;
+
+			command_received = true;	
 		}
-		else
-			command_ = incoming_byte;
-
-		command_received = true;
-
-		delay(2);	//TODO find out why this delay is needed, if it's not there the buffer remains full
 	}
+	
 	return command_received;
 }
 
@@ -113,6 +116,14 @@ bool Solver::execute_comand()
 		executed = slide(slider_Y_, dir::close);
 		break;
 
+	case '>':
+		executed = enable_steppers();
+		break;
+
+	case '<':
+		executed = disable_steppers();
+		break;
+
 	case 'A':
 		if(!adjust_cmd(dir::cw))
 		{
@@ -126,11 +137,17 @@ bool Solver::execute_comand()
 		if(!adjust_cmd(dir::ccw))
 		{
 			Serial.write('NUL');
-			return true;	//in order to avoid setting executed to true, but still isgnaling the end of the reading process
+			return true;	//in order to avoid setting executed to true, but still signaling the end of the reading process
 		}
 		executed = true;	//correct command read
 		break;
-		
+
+	//only testing
+	case 'v':
+		executed = turn_side(gripper_F_,dir::ccw,1) & turn_side(gripper_B_,dir::cw,1);
+		break;
+	//end of testing area
+
 	default:
 		Serial.write('NUL');
 		return true; //finished executing command, even ignoring a wrong command is considered executing it
@@ -152,7 +169,7 @@ int Solver::char_to_int(char x)
 	return static_cast<int>(x) - 48;
 }
 
-void Solver::enable_steppers()
+bool Solver::enable_steppers()
 {
 	gripper_L_.enable(true);
 	slider_Y_.enable(true);
@@ -160,9 +177,10 @@ void Solver::enable_steppers()
 	gripper_F_.enable(true);
 	gripper_B_.enable(true);
 	slider_X_.enable(true);
+	return true;
 }
 
-void Solver::disable_steppers()
+bool Solver::disable_steppers()
 {
 	gripper_L_.enable(false);
 	slider_Y_.enable(false);
@@ -170,6 +188,7 @@ void Solver::disable_steppers()
 	gripper_F_.enable(false);
 	gripper_B_.enable(false);
 	slider_X_.enable(false);
+	return true;
 }
 
 //--------------------------------------- actual moving functions -----------------------------------------------------------------------
@@ -359,6 +378,14 @@ bool Solver::adjust_cmd(dir dir)
 		default:
 		return false; //unknown command
 	break;
+	}
+}
+
+void Solver::clear_buffer()
+{
+	while(Serial.available() > 0) 
+	{
+		char t = Serial.read();
 	}
 }
 

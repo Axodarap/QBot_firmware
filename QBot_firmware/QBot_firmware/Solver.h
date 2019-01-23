@@ -13,14 +13,15 @@ public:
 	bool read_command();
 	bool execute_comand();
 	int char_to_int(char x);
-	void enable_steppers();
-	void disable_steppers();
+	bool enable_steppers();
+	bool disable_steppers();
 
-private:
+//private:
 	bool turn_side(Gripper &gripper, dir dir, int turns);
 	bool slide(Slider &slider, dir dir);
 	bool turn_top_bot(dir dir, int turns, cube_sides side);
 	bool adjust_cmd(dir dir);
+	void clear_buffer();
 
   
 		
