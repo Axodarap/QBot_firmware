@@ -17,9 +17,9 @@ public:
 	bool disable_steppers();
 
 //private:
-	bool turn_side(Gripper &gripper, dir dir, int turns);
-	bool slide(Slider &slider, dir dir);
-	bool turn_top_bot(dir dir, int turns, cube_sides side);
+	bool turn_side(Gripper &gripper, dir dir, int turns, unsigned long time);
+	bool slide(Slider &slider, dir dir, unsigned long time);
+	bool turn_top_bot(dir dir, int turns, cube_sides side, unsigned long time);
 	bool adjust_cmd(dir dir);
 	void clear_buffer();
 

@@ -26,6 +26,8 @@ void setup()
 //		* need o read 2 a maximum of 2 bytes and guarantee that theses get read, I also have 1 byte commands tho
 //		* when calling two gripper simotaniously they sometimes move more often then they should --> implement a stop in the turn side function?
 
+//TODO Zeit von solver an Gripper und Slider übergeben und die übergeben dann an stepper
+//aktuelle zeit beim aufruf einfach immer mitgeben!! #papa_rules
 
 void loop() 
 {

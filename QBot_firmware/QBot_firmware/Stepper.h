@@ -5,7 +5,7 @@ class Stepper
 {
 public:
 	Stepper(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, int speed); 
-	bool update();
+	bool update(unsigned long time);
 	void enable(bool en);
 	void adjust(dir dir);	//ATENTION, this function is no non-blocking (includes delays)
 	
@@ -22,6 +22,7 @@ private:
 	int steps_per_rotation_;		
 	int steps_to_go_;			//remaining # of steps
 	unsigned long next_call_;	//storing the system time when the stepper should move again
+	
 
 	int angle_to_steps(int angle);
 

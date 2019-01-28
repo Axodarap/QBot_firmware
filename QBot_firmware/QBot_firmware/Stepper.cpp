@@ -19,7 +19,7 @@ Stepper::Stepper(int step_pin, int dir_pin, int en_pin, int steps_per_rotation, 
 }
 
 
-bool Stepper::update()
+bool Stepper::update(unsigned long time)
 {
 	int delay = 1000/speed_/2; //delay in ms in order to achieve pwm with 50% duty cycle and the desired steps/s
 	
@@ -29,11 +29,11 @@ bool Stepper::update()
 	}
 	else
 	{
-		if(millis() >= next_call_)
+		if(time >= next_call_)
 		{
 			
 			digitalWrite(step_pin_, !digitalRead(step_pin_));
-			next_call_ = millis() + delay;
+			next_call_ = time + delay;
 	
 			if(!digitalRead(step_pin_))
 			{

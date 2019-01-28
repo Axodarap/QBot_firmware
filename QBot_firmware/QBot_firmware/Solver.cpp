@@ -24,7 +24,8 @@ void Solver::init(long baud)
 bool Solver::read_command()		//empties the serial buffer and stores the command in its approproiate variables, returns true once finished
 {
 	bool command_received = false;
-	
+
+	//TODO eventuell nur auf Reihenfolge gehen
 
 	if(Serial.available() >= 2)		//waiting until the buffer has reached a size of 2 bytes --> maybe implement a timeout to regularly empty the buffer
 	{
@@ -49,71 +50,72 @@ bool Solver::read_command()		//empties the serial buffer and stores the command 
 bool Solver::execute_comand()
 {
 	bool executed = false;
+	unsigned long current_time = millis(); //die hier an turn_side() übergeben 
 	
 	switch(command_)
 	{
 	case 'R':
-		executed = turn_side(gripper_R_,dir::cw,indicator_);
+		executed = turn_side(gripper_R_,dir::cw,indicator_, current_time);
 		break;
 
 	case 'r':
-		executed = turn_side(gripper_R_,dir::ccw,indicator_);
+		executed = turn_side(gripper_R_,dir::ccw,indicator_, current_time);
 		break;
 
 	case 'L':
-		executed = turn_side(gripper_L_,dir::cw,indicator_);
+		executed = turn_side(gripper_L_,dir::cw,indicator_, current_time);
 		break;
 	
 	case 'l':
-		executed = turn_side(gripper_L_,dir::ccw,indicator_);
+		executed = turn_side(gripper_L_,dir::ccw,indicator_, current_time);
 		break;
 
 	case 'F':
-		executed = turn_side(gripper_F_,dir::cw,indicator_);
+		executed = turn_side(gripper_F_,dir::cw,indicator_, current_time);
 		break;
 
 	case 'f':
-		executed = turn_side(gripper_F_,dir::ccw,indicator_);
+		executed = turn_side(gripper_F_,dir::ccw,indicator_, current_time);
 		break;
 
 	case 'B':
-		executed = turn_side(gripper_B_,dir::cw,indicator_);
+		executed = turn_side(gripper_B_,dir::cw,indicator_, current_time);
 		break;
 	
 	case 'b':
-		executed = turn_side(gripper_B_,dir::ccw,indicator_);
+		executed = turn_side(gripper_B_,dir::ccw,indicator_, current_time);
 		break;
 		
 	case 'U':
-		executed = turn_top_bot(dir::cw, indicator_, cube_sides::U);
+		executed = turn_top_bot(dir::cw, indicator_, cube_sides::U, current_time);
 		break;
 		
 	case 'u':
-		executed = turn_top_bot(dir::ccw, indicator_, cube_sides::U);
+		executed = turn_top_bot(dir::ccw, indicator_, cube_sides::U, current_time);
 		break;
 		
 	case 'D':
-		executed = turn_top_bot(dir::cw, indicator_, cube_sides::D);
+		executed = turn_top_bot(dir::cw, indicator_, cube_sides::D, current_time);
 		break;
 		
 	case 'd':
-		executed = turn_top_bot(dir::ccw, indicator_, cube_sides::D);
+		executed = turn_top_bot(dir::ccw, indicator_, cube_sides::D, current_time);
 		break;
 
 	case 'X':
-		executed = slide(slider_X_, dir::open);
+		executed = slide(slider_X_, dir::open, current_time);
 		break;
 
 	case 'x':
-		executed = slide(slider_X_, dir::close);
+		executed = slide(slider_X_, dir::close, current_time);
 		break;
 
 	case 'Y':
-		executed = slide(slider_Y_, dir::open);
+		executed = slide(slider_Y_, dir::open, current_time);
 		break;
 
 	case 'y':
-		executed = slide(slider_Y_, dir::close);
+		executed = slide(slider_Y_, dir::close, current_time);
 		break;
 
 	case '>':
@@ -144,7 +146,7 @@ bool Solver::execute_comand()
 
 	//only testing
 	case 'v':
-		executed = turn_side(gripper_F_,dir::ccw,1) & turn_side(gripper_B_,dir::cw,1);
+		executed = turn_side(gripper_F_,dir::ccw,1, current_time) & turn_side(gripper_B_,dir::cw,1, current_time);
 		break;
 	//end of testing area
 
@@ -193,7 +195,7 @@ bool Solver::disable_steppers()
 
 //--------------------------------------- actual moving functions -----------------------------------------------------------------------
 
-bool Solver::turn_side(Gripper & gripper, dir dir, int turns)
+bool Solver::turn_side(Gripper & gripper, dir dir, int turns, unsigned long time)
 {
 
 	if(!gripper.moving)	//if this is the first call of the function
@@ -204,7 +206,7 @@ bool Solver::turn_side(Gripper & gripper, dir dir, int turns)
 	}
 	else
 	{
-		if(gripper.update())
+		if(gripper.update(time))
 		{
 			gripper.moving = false;
 			return true;	//done moving
@@ -217,7 +219,7 @@ bool Solver::turn_side(Gripper & gripper, dir dir, int turns)
 	}
 }
 
-bool Solver::slide(Slider & slider, dir dir)
+bool Solver::slide(Slider & slider, dir dir, unsigned long time)
 {
 	static bool busy = false;
 
@@ -229,7 +231,7 @@ bool Solver::slide(Slider & slider, dir dir)
 	}
 	else
 	{
-		if(slider.update())
+		if(slider.update(time))
 		{
 			busy = false;
 			return true;	//done moving
@@ -243,61 +245,61 @@ bool Solver::slide(Slider & slider, dir dir)
 
 
 
-bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
+bool Solver::turn_top_bot(dir direction, int turns, cube_sides side, unsigned long time)
 {
 	
 	switch(moving_state_)
 	{
 		case state::unlock1:
-			if(slide(slider_X_, dir::open))	//moving steppers away
+			if(slide(slider_X_, dir::open, time))	//moving steppers away
 				moving_state_ = state::flip1;
 			break;
 			
 		case state::flip1:
-			if(turn_side(gripper_F_,dir::ccw,1) & turn_side(gripper_B_,dir::cw,1))
+			if(turn_side(gripper_F_,dir::ccw,1, time) & turn_side(gripper_B_,dir::cw,1, time))
 				moving_state_ = state::lock1;
 			break;
 
 		case state::lock1:
-			if(slide(slider_X_, dir::close))
+			if(slide(slider_X_, dir::close, time))
 				moving_state_ = state::unlock2;
 			break;
 
 		case state::unlock2:
-			if(slide(slider_Y_, dir::open))
+			if(slide(slider_Y_, dir::open, time))
 				moving_state_ = state::flip2;
 			break;
 
 		case state::flip2:
-			if(turn_side(gripper_F_,dir::ccw,1) & turn_side(gripper_B_,dir::cw,1))
+			if(turn_side(gripper_F_,dir::ccw,1, time) & turn_side(gripper_B_,dir::cw,1, time))
 				moving_state_ = state::lock2;
 			break;
 
 		case state::lock2:
-			if(slide(slider_Y_, dir::close))
+			if(slide(slider_Y_, dir::close, time))
 				moving_state_ = state::turn;
 			break;
 
 		case state::turn:
 			if(side == cube_sides::U)
 			{
-				if(turn_side(gripper_L_,direction,turns))
+				if(turn_side(gripper_L_,direction,turns, time))
 					moving_state_ = state::unlock3;
 			}
 			if(side == cube_sides::D)
 			{
-				if(turn_side(gripper_R_,direction,turns))
+				if(turn_side(gripper_R_,direction,turns, time))
 					moving_state_ = state::unlock3;
 			}
 			break;
 
 		case state::unlock3:
-			if(slide(slider_X_, dir::open))
+			if(slide(slider_X_, dir::open, time))
 					moving_state_ = state::flip3;
 			break;
 
 		case state::flip3:
-			if(turn_side(gripper_F_,dir::cw,1) & turn_side(gripper_B_,dir::ccw,1))
+			if(turn_side(gripper_F_,dir::cw,1, time) & turn_side(gripper_B_,dir::ccw,1, time))
 				moving_state_ = state::turn_back;
 			break;
 
@@ -310,33 +312,33 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side)
 
 			if(side == cube_sides::U)
 			{
-				if(turn_side(gripper_L_,n_dir,turns))
+				if(turn_side(gripper_L_,n_dir,turns, time))
 					moving_state_ = state::lock3;
 			}
 			if(side == cube_sides::D)
 			{
-				if(turn_side(gripper_R_,n_dir,turns))
+				if(turn_side(gripper_R_,n_dir,turns, time))
 					moving_state_ = state::lock3;
 			}
 			break;
 
 		case state::lock3:
-			if(slide(slider_X_, dir::close))
+			if(slide(slider_X_, dir::close, time))
 				moving_state_ = state::unlock4;
 			break;
 
 		case state::unlock4:
-			if(slide(slider_Y_, dir::open))
+			if(slide(slider_Y_, dir::open, time))
 				moving_state_ = state::flip4;
 			break;
 
 		case state::flip4:
-			if(turn_side(gripper_F_,dir::cw,1) & turn_side(gripper_B_,dir::ccw,1))
+			if(turn_side(gripper_F_,dir::cw,1, time) & turn_side(gripper_B_,dir::ccw,1, time))
 				moving_state_ = state::lock4;
 			break;
 
 		case state::lock4:
-			if(slide(slider_Y_, dir::close))
+			if(slide(slider_Y_, dir::close, time))
 			{
 				moving_state_ = state::unlock1;
 				return true;	//done moving
