@@ -2,14 +2,13 @@
 
 
 Solver::Solver():
+communication_handle(),
 slider_Y_(sliderY_step, sliderY_dir, sliderY_en, steps_per_rot, slider_speed, max_angle),
 slider_X_(sliderX_step, sliderX_dir, sliderX_en, steps_per_rot, slider_speed, max_angle),
 gripper_L_(gripperL_step, gripperL_dir, gripperL_en, steps_per_rot, gripper_speed),
 gripper_R_(gripperR_step, gripperR_dir, gripperR_en, steps_per_rot, gripper_speed),
 gripper_F_(gripperF_step, gripperF_dir, gripperF_en, steps_per_rot, gripper_speed),
 gripper_B_(gripperB_step, gripperB_dir, gripperB_en, steps_per_rot, gripper_speed),
-command_{'0'}, 
-indicator_{0},
 moving_state_{state::unlock1}
 {
 
@@ -17,89 +16,65 @@ moving_state_{state::unlock1}
 
 void Solver::init(long baud)
 {
-	Serial.begin(baud);
+	communication_handle.init_communication(baudrate);
 	enable_steppers();
 }
 
-bool Solver::read_command()		//empties the serial buffer and stores the command in its approproiate variables, returns true once finished
-{
-	bool command_received = false;
-
-	//TODO eventuell nur auf Reihenfolge gehen
-
-	if(Serial.available() >= 2)		//waiting until the buffer has reached a size of 2 bytes --> maybe implement a timeout to regularly empty the buffer
-	{
-		while(Serial.available())
-		{
-			char incoming_byte = Serial.read();
-
-			if((48 <= static_cast<int>(incoming_byte)) && (static_cast<int>(incoming_byte) <= 57))  //if incoming byte is a digit
-			{
-				indicator_ = char_to_int(incoming_byte);
-			}
-			else
-				command_ = incoming_byte;
-
-			command_received = true;	
-		}
-	}
-	
-	return command_received;
-}
 
 bool Solver::execute_comand()
 {
 	bool executed = false;
 	unsigned long current_time = millis(); //die hier an turn_side() übergeben 
 	
-	switch(command_)
+	switch(communication_handle.get_cmd())
 	{
 	case 'R':
-		executed = turn_side(gripper_R_,dir::cw,indicator_, current_time);
+
+		executed = turn_side(gripper_R_,dir::cw,communication_handle.get_indicator(), current_time);
 		break;
 
 	case 'r':
-		executed = turn_side(gripper_R_,dir::ccw,indicator_, current_time);
+		executed = turn_side(gripper_R_,dir::ccw,communication_handle.get_indicator(), current_time);
 		break;
 
 	case 'L':
-		executed = turn_side(gripper_L_,dir::cw,indicator_, current_time);
+		executed = turn_side(gripper_L_,dir::cw,communication_handle.get_indicator(), current_time);
 		break;
 	
 	case 'l':
-		executed = turn_side(gripper_L_,dir::ccw,indicator_, current_time);
+		executed = turn_side(gripper_L_,dir::ccw,communication_handle.get_indicator(), current_time);
 		break;
 
 	case 'F':
-		executed = turn_side(gripper_F_,dir::cw,indicator_, current_time);
+		executed = turn_side(gripper_F_,dir::cw,communication_handle.get_indicator(), current_time);
 		break;
 
 	case 'f':
-		executed = turn_side(gripper_F_,dir::ccw,indicator_, current_time);
+		executed = turn_side(gripper_F_,dir::ccw,communication_handle.get_indicator(), current_time);
 		break;
 
 	case 'B':
-		executed = turn_side(gripper_B_,dir::cw,indicator_, current_time);
+		executed = turn_side(gripper_B_,dir::cw,communication_handle.get_indicator(), current_time);
 		break;
 	
 	case 'b':
-		executed = turn_side(gripper_B_,dir::ccw,indicator_, current_time);
+		executed = turn_side(gripper_B_,dir::ccw,communication_handle.get_indicator(), current_time);
 		break;
 		
 	case 'U':
-		executed = turn_top_bot(dir::cw, indicator_, cube_sides::U, current_time);
+		executed = turn_top_bot(dir::cw, communication_handle.get_indicator(), cube_sides::U, current_time);
 		break;
 		
 	case 'u':
-		executed = turn_top_bot(dir::ccw, indicator_, cube_sides::U, current_time);
+		executed = turn_top_bot(dir::ccw, communication_handle.get_indicator(), cube_sides::U, current_time);
 		break;
 		
 	case 'D':
-		executed = turn_top_bot(dir::cw, indicator_, cube_sides::D, current_time);
+		executed = turn_top_bot(dir::cw, communication_handle.get_indicator(), cube_sides::D, current_time);
 		break;
 		
 	case 'd':
-		executed = turn_top_bot(dir::ccw, indicator_, cube_sides::D, current_time);
+		executed = turn_top_bot(dir::ccw, communication_handle.get_indicator(), cube_sides::D, current_time);
 		break;
 
 	case 'X':
@@ -118,12 +93,16 @@ bool Solver::execute_comand()
 		executed = slide(slider_Y_, dir::close, current_time);
 		break;
 
-	case '>':
-		executed = enable_steppers();
-		break;
-
-	case '<':
-		executed = disable_steppers();
+	case 'E':
+		if(communication_handle.get_indicator() == 1)		//E1
+			executed = enable_steppers();
+		if(communication_handle.get_indicator() == 2)		//E2
+			executed = disable_steppers();
+		else
+		{
+			Serial.write('NUL');
+			return true;
+		}
 		break;
 
 	case 'A':
@@ -146,7 +125,7 @@ bool Solver::execute_comand()
 
 	//only testing
 	case 'v':
-		executed = turn_side(gripper_F_,dir::ccw,1, current_time) & turn_side(gripper_B_,dir::cw,1, current_time);
+		executed = turn_side(gripper_F_,dir::ccw,communication_handle.get_indicator(), current_time) & turn_side(gripper_B_,dir::cw,communication_handle.get_indicator(), current_time);
 		break;
 	//end of testing area
 
@@ -166,10 +145,7 @@ bool Solver::execute_comand()
 
 
 
-int Solver::char_to_int(char x)
-{
-	return static_cast<int>(x) - 48;
-}
+
 
 bool Solver::enable_steppers()
 {
@@ -351,7 +327,7 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side, unsigned lo
 
 bool Solver::adjust_cmd(dir dir)
 {
-	switch(indicator_)
+	switch(communication_handle.get_indicator())
 	{
 		case 1:
 			slider_X_.adjust(dir);
@@ -383,13 +359,11 @@ bool Solver::adjust_cmd(dir dir)
 	}
 }
 
-void Solver::clear_buffer()
+bool Solver::turn_back(dir dir, int turns, Gripper gripper, unsigned long time)
 {
-	while(Serial.available() > 0) 
-	{
-		char t = Serial.read();
-	}
+	return false;
 }
+
 
 
 
