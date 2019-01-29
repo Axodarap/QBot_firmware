@@ -24,12 +24,11 @@ void Solver::init(long baud)
 bool Solver::execute_comand()
 {
 	bool executed = false;
-	unsigned long current_time = millis(); //die hier an turn_side() übergeben 
+	unsigned long current_time = millis(); 
 	
 	switch(communication_handle.get_cmd())
 	{
 	case 'R':
-
 		executed = turn_side(gripper_R_,dir::cw,communication_handle.get_indicator(), current_time);
 		break;
 
@@ -173,7 +172,6 @@ bool Solver::disable_steppers()
 
 bool Solver::turn_side(Gripper & gripper, dir dir, int turns, unsigned long time)
 {
-
 	if(!gripper.moving)	//if this is the first call of the function
 	{
 		gripper.set_turns(turns, dir);
@@ -354,15 +352,20 @@ bool Solver::adjust_cmd(dir dir)
 			return true;
 
 		default:
-		return false; //unknown command
+			return false; //unknown command
 	break;
 	}
 }
 
-bool Solver::turn_back(dir dir, int turns, Gripper gripper, unsigned long time)
+
+
+bool Solver::turn_back(dir direction, int turns, Gripper &gripper, Slider &slider, unsigned long time) 
 {
+
 	return false;
 }
+
+
 
 
 

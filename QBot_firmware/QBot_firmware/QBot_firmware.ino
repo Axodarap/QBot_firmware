@@ -12,6 +12,9 @@
 
 Solver qbot;
 
+//TODO when turning a side for an odd number of quarter turns it has to be turned back, should happen on the highest level possible. L1 -> L1,X,l1,x
+//TODO pass command and indicator onto execute_command()
+
 void setup() 
 {
 	qbot.init(baudrate);

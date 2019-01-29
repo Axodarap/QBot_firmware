@@ -22,8 +22,7 @@ private:
 	bool slide(Slider &slider, dir dir, unsigned long time);
 	bool turn_top_bot(dir dir, int turns, cube_sides side, unsigned long time);
 	bool adjust_cmd(dir dir);
-	bool turn_back(dir dir, int turns, Gripper gripper, unsigned long time);
-
+	bool turn_back(dir direction, int turns, Gripper &gripper, Slider &slider, unsigned long time); //TODO not sure if this is the right way to do it | also not implemented yet
 	Slider slider_Y_;
 	Slider slider_X_;
 	Gripper gripper_L_;
