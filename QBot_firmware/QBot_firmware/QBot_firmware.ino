@@ -18,10 +18,11 @@ Solver qbot;
 void setup() 
 {
 	qbot.init(baudrate);
+
 }
 
 void loop() 
 {
 	while(!qbot.communication_handle.read_command());
-	while(!qbot.execute_comand());
+	while(!qbot.execute_comand(qbot.communication_handle.get_cmd(), qbot.communication_handle.get_indicator()));
 }
