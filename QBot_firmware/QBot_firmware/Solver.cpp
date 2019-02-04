@@ -303,21 +303,28 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side, unsigned lo
 			break;
 
 		case state::turn_back:
-			dir n_dir;					//reversed direction
-			if(direction == dir::cw)	//switching direcition to turn gripper back into initial position
-					n_dir = dir::ccw;
-				else
-					n_dir = dir::cw;
-
-			if(side == cube_sides::U)
+			if(turns % 2 == 0)
 			{
-				if(turn_side(gripper_L_,n_dir,turns, time))
-					moving_state_top_bot_ = state::lock3;
+				moving_state_top_bot_ = state::lock3;
 			}
-			if(side == cube_sides::D)
+			else
 			{
-				if(turn_side(gripper_R_,n_dir,turns, time))
-					moving_state_top_bot_ = state::lock3;
+				dir n_dir;					//reversed direction
+				if(direction == dir::cw)	//switching direcition to turn gripper back into initial position
+						n_dir = dir::ccw;
+					else
+						n_dir = dir::cw;
+
+				if(side == cube_sides::U)
+				{
+					if(turn_side(gripper_L_,n_dir,turns, time))
+						moving_state_top_bot_ = state::lock3;
+				}
+				if(side == cube_sides::D)
+				{
+					if(turn_side(gripper_R_,n_dir,turns, time))
+						moving_state_top_bot_ = state::lock3;
+				}
 			}
 			break;
 
