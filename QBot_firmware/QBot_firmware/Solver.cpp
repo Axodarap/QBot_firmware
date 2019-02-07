@@ -148,11 +148,7 @@ bool Solver::execute_comand(char command, int indicator)
 		break;
 
 	//only testing
-	case 'v':
-		executed = turn_side(gripper_F_,dir::ccw,indicator, current_time) & turn_side(gripper_B_,dir::cw,indicator, current_time);
-		break;
-	//end of testing area
-
+	
 	default:
 		Serial.write('NUL');
 		return true; //finished executing command, even ignoring a wrong command is considered executing it
@@ -303,30 +299,25 @@ bool Solver::turn_top_bot(dir direction, int turns, cube_sides side, unsigned lo
 			break;
 
 		case state::turn_back:
-			if(turns % 2 == 0)
-			{
-				moving_state_top_bot_ = state::lock3;
-			}
-			else
-			{
-				dir n_dir;					//reversed direction
-				if(direction == dir::cw)	//switching direcition to turn gripper back into initial position
-						n_dir = dir::ccw;
-					else
-						n_dir = dir::cw;
+		{
+			dir n_dir;					//reversed direction
+			if(direction == dir::cw)	//switching direcition to turn gripper back into initial position
+					n_dir = dir::ccw;
+				else
+					n_dir = dir::cw;
 
-				if(side == cube_sides::U)
-				{
-					if(turn_side(gripper_L_,n_dir,turns, time))
-						moving_state_top_bot_ = state::lock3;
-				}
-				if(side == cube_sides::D)
-				{
-					if(turn_side(gripper_R_,n_dir,turns, time))
-						moving_state_top_bot_ = state::lock3;
-				}
+			if(side == cube_sides::U)
+			{
+				if(turn_side(gripper_L_,n_dir,turns % 2, time))
+					moving_state_top_bot_ = state::lock3;
 			}
-			break;
+			if(side == cube_sides::D)
+			{
+				if(turn_side(gripper_R_,n_dir,turns % 2, time))
+					moving_state_top_bot_ = state::lock3;
+			}
+		}
+		break;
 
 		case state::lock3:
 			if(slide(slider_X_, dir::close, time))
@@ -412,7 +403,7 @@ bool Solver::turn_back(Gripper &gripper, Slider &slider, dir direction, int turn
 			break;
 
 		case state::turn_back:
-			if(turn_side(gripper, n_dir, turns, time))
+			if(turn_side(gripper, n_dir, turns % 2, time))
 				moving_state_turn_back_ = state::lock1;
 			break;
 
