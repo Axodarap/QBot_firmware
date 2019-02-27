@@ -102,19 +102,40 @@ bool Solver::execute_comand(char command, int indicator)
 		break;
 
 	case 'X':
-		executed = slide(slider_X_, dir::open, current_time);
+		if(indicator == 0)	//X0 represents to sliders moving, X1, X2,... represents the two grippers of said axis to move
+			executed = slide(slider_X_, dir::open, current_time);
+		else
+		{
+			executed = turn_side(gripper_L_, dir::ccw, indicator, current_time) & turn_side(gripper_R_, dir::cw, indicator, current_time);
+		}
 		break;
 
 	case 'x':
-		executed = slide(slider_X_, dir::close, current_time);
+		if(indicator == 0)
+			executed = slide(slider_X_, dir::close, current_time);
+		else
+		{
+			executed = turn_side(gripper_L_, dir::cw, indicator, current_time) & turn_side(gripper_R_, dir::ccw, indicator, current_time);
+		}
 		break;
 
 	case 'Y':
-		executed = slide(slider_Y_, dir::open, current_time);
+		if (indicator == 0)
+			executed = slide(slider_Y_, dir::open, current_time);
+		else
+		{
+			executed = turn_side(gripper_F_, dir::cw, indicator, current_time) & turn_side(gripper_B_, dir::ccw, indicator, current_time);
+		}
 		break;
 
 	case 'y':
-		executed = slide(slider_Y_, dir::close, current_time);
+		if (indicator == 0)
+			executed = slide(slider_Y_, dir::close, current_time);
+		else
+		{
+			executed = turn_side(gripper_F_, dir::ccw, indicator, current_time) & turn_side(gripper_B_, dir::cw, indicator, current_time);
+		}
+		break;
 		break;
 
 	case 'E':
